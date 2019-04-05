@@ -2,15 +2,12 @@ from __future__ import print_function
 import matplotlib.pyplot as plt
  
 class AStarGraph(object):
-	#Define a class board like grid with two barriers
  
 	def __init__(self):
 		self.barriers = []
 		self.barriers.append([(2,4),(2,5),(2,6),(3,6),(4,6),(5,6),(5,5),(5,4),(5,3),(5,2),(4,2),(3,2)])
  
 	def heuristic(self, start, goal):
-		#Use Chebyshev distance heuristic if we can move one square either
-		#adjacent or diagonal
 		D = 1
 		D2 = 1
 		dx = abs(start[0] - goal[0])
@@ -19,7 +16,7 @@ class AStarGraph(object):
  
 	def get_vertex_neighbours(self, pos):
 		n = []
-		#Moves allow link a chess king
+	
 		for dx, dy in [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,1),(1,-1),(-1,-1)]:
 			x2 = pos[0] + dx
 			y2 = pos[1] + dy
@@ -31,15 +28,14 @@ class AStarGraph(object):
 	def move_cost(self, a, b):
 		for barrier in self.barriers:
 			if b in barrier:
-				return 100 #Extremely high cost to enter barrier squares
-		return 1 #Normal movement cost
+				return 100 
+		return 1 
  
 def AStarSearch(start, end, graph):
  
-	G = {} #Actual movement cost to each position from the start position
-	F = {} #Estimated movement cost of start to end going via this position
+	G = {}
+	F = {} 
  
-	#Initialize starting values
 	G[start] = 0 
 	F[start] = graph.heuristic(start, end)
  
@@ -48,7 +44,6 @@ def AStarSearch(start, end, graph):
 	cameFrom = {}
  
 	while len(openVertices) > 0:
-		#Get the vertex in the open list with the lowest F score
 		current = None
 		currentFscore = None
 		for pos in openVertices:
@@ -56,32 +51,28 @@ def AStarSearch(start, end, graph):
 				currentFscore = F[pos]
 				current = pos
  
-		#Check if we have reached the goal
 		if current == end:
-			#Retrace our route backward
 			path = [current]
 			while current in cameFrom:
 				current = cameFrom[current]
 				path.append(current)
 			path.reverse()
-			return path, F[end] #Done!
+			return path, F[end] 
  
-		#Mark the current vertex as closed
+		
 		openVertices.remove(current)
 		closedVertices.add(current)
  
-		#Update scores for vertices near the current position
 		for neighbour in graph.get_vertex_neighbours(current):
 			if neighbour in closedVertices: 
-				continue #We have already processed this node exhaustively
+				continue 
 			candidateG = G[current] + graph.move_cost(current, neighbour)
  
 			if neighbour not in openVertices:
-				openVertices.add(neighbour) #Discovered a new vertex
+				openVertices.add(neighbour) 
 			elif candidateG >= G[neighbour]:
-				continue #This G score is worse than previously found
+				continue
  
-			#Adopt this G score
 			cameFrom[neighbour] = current
 			G[neighbour] = candidateG
 			H = graph.heuristic(neighbour, end)

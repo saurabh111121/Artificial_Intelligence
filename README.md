@@ -6,6 +6,6 @@ algo || source_code
   
   
 => py 3.7
-=> conda || pip
+=> conda 4.6.11 || pip
 =>linter-pylint
 =>matplotlib
